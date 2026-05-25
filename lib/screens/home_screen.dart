@@ -13,7 +13,8 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -31,37 +32,74 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F0EB),
+
       appBar: AppBar(
-        title: const Text('UniLink'),
+        elevation: 0,
+        backgroundColor: const Color(0xFF5D4037),
+
+        title: const Text(
+          '',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        centerTitle: true,
+
         bottom: TabBar(
           controller: _tabController,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
           tabs: const [
             Tab(text: 'Lost Items'),
             Tab(text: 'Found Items'),
           ],
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          // Refresh both lost and found items
-          final lostRefresh = ref.refresh(lostItemsProvider.future);
-          final foundRefresh = ref.refresh(foundItemsProvider.future);
-          await Future.wait([lostRefresh, foundRefresh]);
-        },
-        child: TabBarView(
-          controller: _tabController,
-          children: const [
-            LostScreen(),
-            FoundScreen(),
-          ],
+
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F0EB),
+              Color(0xFFE6DED7),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+
+        child: RefreshIndicator(
+          color: const Color(0xFF5D4037),
+
+          onRefresh: () async {
+            final lostRefresh = ref.refresh(lostItemsProvider.future);
+            final foundRefresh = ref.refresh(foundItemsProvider.future);
+            await Future.wait([lostRefresh, foundRefresh]);
+          },
+
+          child: TabBarView(
+            controller: _tabController,
+            children: const [
+              LostScreen(),
+              FoundScreen(),
+            ],
+          ),
         ),
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
+        selectedItemColor: const Color(0xFF5D4037),
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
+
         onTap: (index) {
           switch (index) {
             case 0:
-              // Already on home screen
               break;
             case 1:
               context.go(Routes.notifications);
@@ -71,6 +109,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProvid
               break;
           }
         },
+
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

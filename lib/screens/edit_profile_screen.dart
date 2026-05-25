@@ -24,11 +24,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.initialUser?.name ?? '');
-    _sicController = TextEditingController(text: widget.initialUser?.sic ?? '');
-    _yearController = TextEditingController(text: widget.initialUser?.year ?? '');
-    _semesterController = TextEditingController(text: widget.initialUser?.semester ?? '');
-    _collegeController = TextEditingController(text: widget.initialUser?.college ?? '');
+    _nameController =
+        TextEditingController(text: widget.initialUser?.name ?? '');
+    _sicController =
+        TextEditingController(text: widget.initialUser?.sic ?? '');
+    _yearController =
+        TextEditingController(text: widget.initialUser?.year ?? '');
+    _semesterController =
+        TextEditingController(text: widget.initialUser?.semester ?? '');
+    _collegeController =
+        TextEditingController(text: widget.initialUser?.college ?? '');
   }
 
   @override
@@ -56,7 +61,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       );
 
       await ref.read(userServiceProvider).updateProfile(user);
-      
+
       if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
@@ -65,116 +70,160 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         SnackBar(content: Text('Error updating profile: $e')),
       );
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F0EB),
+
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        elevation: 0,
+        backgroundColor: const Color(0xFF5D4037),
+        title: const Text(
+          'Edit Profile ',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           if (_isLoading)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
                 ),
               ),
             )
           else
             IconButton(
-              icon: const Icon(Icons.save),
+              icon: const Icon(Icons.save, color: Colors.white),
               onPressed: _saveProfile,
             ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                prefixIcon: Icon(Icons.person),
+
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F0EB),
+              Color(0xFFE6DED7),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+
+            children: [
+
+              const SizedBox(height: 20),
+
+              _buildField(
+                controller: _nameController,
+                label: "Name",
+                icon: Icons.person,
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _sicController,
-              decoration: const InputDecoration(
-                labelText: 'SIC',
-                prefixIcon: Icon(Icons.badge),
+
+              const SizedBox(height: 16),
+
+              _buildField(
+                controller: _sicController,
+                label: "SIC",
+                icon: Icons.badge,
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your SIC';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _yearController,
-              decoration: const InputDecoration(
-                labelText: 'Year',
-                prefixIcon: Icon(Icons.calendar_today),
+
+              const SizedBox(height: 16),
+
+              _buildField(
+                controller: _yearController,
+                label: "Year",
+                icon: Icons.calendar_today,
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your year';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _semesterController,
-              decoration: const InputDecoration(
-                labelText: 'Semester',
-                prefixIcon: Icon(Icons.school),
+
+              const SizedBox(height: 16),
+
+              _buildField(
+                controller: _semesterController,
+                label: "Semester",
+                icon: Icons.school,
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your semester';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _collegeController,
-              decoration: const InputDecoration(
-                labelText: 'College',
-                prefixIcon: Icon(Icons.location_city),
+
+              const SizedBox(height: 16),
+
+              _buildField(
+                controller: _collegeController,
+                label: "College",
+                icon: Icons.location_city,
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your college';
-                }
-                return null;
-              },
-            ),
-          ],
+
+              const SizedBox(height: 30),
+
+              SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF5D4037),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: _isLoading ? null : _saveProfile,
+                  child: const Text(
+                    "SAVE PROFILE",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+  }) {
+    return TextFormField(
+      controller: controller,
+      style: const TextStyle(color: Colors.black87),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: const Color(0xFF5D4037)),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF5D4037), width: 2),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Please enter $label";
+        }
+        return null;
+      },
     );
   }
 }

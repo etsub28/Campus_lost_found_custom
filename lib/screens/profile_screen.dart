@@ -24,12 +24,22 @@ class ProfileScreen extends ConsumerWidget {
     final userProfile = ref.watch(user_provider.userProfileProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F0EB),
+
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: const Color(0xFF5D4037),
         automaticallyImplyLeading: false,
-        title: const Text('Profile'),
+        title: const Text(
+          'Profile ',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: const Icon(Icons.edit, color: Colors.white),
             onPressed: () => _editProfile(
               context,
               ref,
@@ -37,7 +47,7 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () async {
               await ref.read(authProvider.notifier).signOut();
               if (context.mounted) {
@@ -47,96 +57,125 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: userProfile.when(
-        data: (user) {
-          if (user == null) {
-            return Center(
+
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F0EB),
+              Color(0xFFE6DED7),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: userProfile.when(
+          data: (user) {
+            if (user == null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Complete your profile ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF5D4037),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF5D4037),
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () => _editProfile(context, ref, null),
+                      child: const Text('Complete Profile'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Complete your profile to get started',
-                    style: TextStyle(fontSize: 16),
+                  const SizedBox(height: 20),
+
+                  Hero(
+                    tag: 'profile-avatar',
+                    child: CircleAvatar(
+                      radius: 55,
+                      backgroundColor: const Color(0xFF5D4037),
+                      child: Text(
+                        user.name.isNotEmpty
+                            ? user.name[0].toUpperCase()
+                            : '?',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
+
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => _editProfile(context, ref, null),
-                    child: const Text('Complete Profile'),
+
+                  Text(
+                    user.name,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF3E2723),
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Text(
+                    user.email,
+                    style: const TextStyle(
+                      color: Colors.black54,
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  Card(
+                    color: const Color(0xFFFFFBF5),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildTile(Icons.badge, "SIC", user.sic),
+                        const Divider(height: 1),
+                        _buildTile(Icons.school, "Year", user.year),
+                        const Divider(height: 1),
+                        _buildTile(Icons.calendar_today, "Semester", user.semester),
+                        const Divider(height: 1),
+                        _buildTile(Icons.location_city, "College", user.college),
+                      ],
+                    ),
                   ),
                 ],
               ),
             );
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Hero(
-                  tag: 'profile-avatar',
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Theme.of(context).primaryColor,
-                    child: Text(
-                      user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
-                      style: const TextStyle(fontSize: 32, color: Colors.white),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  user.name,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  user.email,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
-                ),
-                const SizedBox(height: 32),
-                Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 0),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.badge),
-                        title: const Text('SIC'),
-                        subtitle: Text(user.sic.isNotEmpty ? user.sic : 'Not set'),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.school),
-                        title: const Text('Year'),
-                        subtitle: Text(user.year.isNotEmpty ? user.year : 'Not set'),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.calendar_today),
-                        title: const Text('Semester'),
-                        subtitle: Text(user.semester.isNotEmpty ? user.semester : 'Not set'),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.location_city),
-                        title: const Text('College'),
-                        subtitle: Text(user.college.isNotEmpty ? user.college : 'Not set'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stackTrace) => Center(
-          child: Text('Error: $error'),
+          },
+          loading: () =>
+              const Center(child: CircularProgressIndicator()),
+          error: (error, stack) =>
+              Center(child: Text('Error: $error')),
         ),
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 2,
+        selectedItemColor: const Color(0xFF5D4037),
+        unselectedItemColor: Colors.grey,
         onTap: (index) {
           switch (index) {
             case 0:
@@ -146,7 +185,6 @@ class ProfileScreen extends ConsumerWidget {
               context.go(Routes.notifications);
               break;
             case 2:
-              // Already on profile
               break;
           }
         },
@@ -164,6 +202,23 @@ class ProfileScreen extends ConsumerWidget {
             label: 'Profile',
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTile(IconData icon, String title, String value) {
+    return ListTile(
+      tileColor: const Color(0xFFFFFBF5),
+      leading: Icon(
+        icon,
+        color: const Color(0xFF5D4037),
+      ),
+      title: Text(title),
+      subtitle: Text(
+        value.isNotEmpty ? value : "Not set",
+        style: const TextStyle(
+          color: Colors.black54,
+        ),
       ),
     );
   }

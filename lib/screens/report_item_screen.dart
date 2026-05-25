@@ -8,13 +8,14 @@ class ReportItemScreen extends ConsumerStatefulWidget {
   const ReportItemScreen({super.key});
 
   @override
-  ConsumerState<ReportItemScreen> createState() => _ReportItemScreenState();
+ ConsumerState<ReportItemScreen> createState() => _ReportItemScreenState();
 }
 
 class _ReportItemScreenState extends ConsumerState<ReportItemScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _locationController = TextEditingController();
+
   String _type = 'lost';
   bool _isLoading = false;
 
@@ -47,11 +48,11 @@ class _ReportItemScreenState extends ConsumerState<ReportItemScreen> {
         status: 'active',
       );
 
-      final createdItem = await ref.read(lostFoundServiceProvider).createItem(item);
-      
+      final createdItem =
+          await ref.read(lostFoundServiceProvider).createItem(item);
+
       if (!mounted) return;
 
-      // Create notification for all users
       await NotificationService().createNotification(
         userId: ref.read(lostFoundServiceProvider).getCurrentUserId(),
         title: 'New ${_type.toUpperCase()} Item Reported',
@@ -59,14 +60,17 @@ class _ReportItemScreenState extends ConsumerState<ReportItemScreen> {
         type: _type,
         itemId: createdItem.id,
       );
+
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Item reported successfully')),
       );
+
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
       );
@@ -75,68 +79,181 @@ class _ReportItemScreenState extends ConsumerState<ReportItemScreen> {
     }
   }
 
+  InputDecoration _inputDecoration(
+    String label,
+    IconData icon,
+  ) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(
+        color: Color(0xFF5D4037),
+      ),
+      prefixIcon: Icon(
+        icon,
+        color: const Color(0xFF5D4037),
+      ),
+      filled: true,
+      fillColor: const Color(0xFFF8F5F2),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(
+          color: Color(0xFF5D4037),
+          width: 1.5,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F0EB),
+
       appBar: AppBar(
-        title: Text('Report ${_type.toUpperCase()} Item'),
+        elevation: 0,
+        backgroundColor: const Color(0xFF5D4037),
+        title: Text(
+          'Report ${_type.toUpperCase()} Item',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(
-                  value: 'lost',
-                  label: Text('Lost'),
-                  icon: Icon(Icons.search),
-                ),
-                ButtonSegment(
-                  value: 'found',
-                  label: Text('Found'),
-                  icon: Icon(Icons.find_in_page),
+
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F0EB),
+              Color(0xFFE6DED7),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
                 ),
               ],
-              selected: {_type},
-              onSelectionChanged: (Set<String> selection) {
-                setState(() => _type = selection.first);
-              },
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(),
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SegmentedButton<String>(
+                  segments: const [
+                    ButtonSegment(
+                      value: 'lost',
+                      label: Text('Lost'),
+                      icon: Icon(Icons.search),
+                    ),
+                    ButtonSegment(
+                      value: 'found',
+                      label: Text('Found'),
+                      icon: Icon(Icons.find_in_page),
+                    ),
+                  ],
+                  selected: {_type},
+                  style: ButtonStyle(
+                    foregroundColor: WidgetStatePropertyAll(
+                      Color(0xFF5D4037),
+                    ),
+                  ),
+                  onSelectionChanged: (Set<String> selection) {
+                    setState(() => _type = selection.first);
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                TextField(
+                  controller: _titleController,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                  ),
+                  decoration: _inputDecoration(
+                    'Title',
+                    Icons.title,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                TextField(
+                  controller: _descriptionController,
+                  maxLines: 4,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                  ),
+                  decoration: _inputDecoration(
+                    'Description',
+                    Icons.description,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                TextField(
+                  controller: _locationController,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                  ),
+                  decoration: _inputDecoration(
+                    'Location',
+                    Icons.location_on,
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                SizedBox(
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _handleSubmit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF5D4037),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text(
+                            'Submit',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _locationController,
-              decoration: const InputDecoration(
-                labelText: 'Location',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _handleSubmit,
-              child: _isLoading
-                  ? const CircularProgressIndicator()
-                  : const Text('Submit'),
-            ),
-          ],
+          ),
         ),
       ),
     );

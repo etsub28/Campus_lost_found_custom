@@ -18,82 +18,156 @@ class ItemDetailScreen extends ConsumerWidget {
     );
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F0EB),
+
       appBar: AppBar(
-        title: Text(item.title),
+        elevation: 0,
+        backgroundColor: const Color(0xFF5D4037),
+        title: Text(
+          item.title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
-          // Show claim button only if the item is not claimed and not owned by current user
           TextButton(
             onPressed: () async {
               // TODO: Implement claim functionality
             },
-            child: const Text('Claim'),
+            child: const Text(
+              'Claim',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: Theme.of(context).textTheme.headlineMedium,
+
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFF5F0EB),
+              Color(0xFFE6DED7),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 6,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF3E2723),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      item.description,
-                      style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Text(
+                    item.description,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
                     ),
-                    const SizedBox(height: 16),
-                    Row(
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8F4F0),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
                       children: [
-                        const Icon(Icons.location_on),
-                        const SizedBox(width: 8),
-                        Text(
-                          item.location,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.access_time),
-                        const SizedBox(width: 8),
-                        Text(
-                          _formatDate(item.timestamp),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(item.type == 'lost'
-                            ? Icons.search
-                            : Icons.find_in_page),
-                        const SizedBox(width: 8),
-                        Text(
-                          item.type.toUpperCase(),
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: item.type == 'lost'
-                                    ? Colors.red
-                                    : Colors.green,
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on,
+                              color: Color(0xFF5D4037),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                item.location,
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                ),
                               ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.access_time,
+                              color: Color(0xFF5D4037),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _formatDate(item.timestamp),
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        Row(
+                          children: [
+                            Icon(
+                              item.type == 'lost'
+                                  ? Icons.search
+                                  : Icons.find_in_page,
+                              color: const Color(0xFF5D4037),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              item.type.toUpperCase(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: item.type == 'lost'
+                                    ? Colors.red.shade700
+                                    : Colors.green.shade700,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

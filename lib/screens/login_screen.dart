@@ -33,17 +33,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     setState(() => _isLoading = true);
-    
+
     try {
       await ref.read(authProvider.notifier).signIn(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
-      
+            _emailController.text.trim(),
+            _passwordController.text,
+          );
+
       if (!mounted) return;
-      // Navigate immediately; router will also refresh via auth stream
+
       if (FirebaseAuth.instance.currentUser != null) {
-        if (!mounted) return;
         context.go(Routes.home);
       }
     } catch (e) {
@@ -59,43 +58,159 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Welcome Back'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.emailAddress,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF3E2723),
+              Color(0xFF5D4037),
+              Color(0xFF8D6E63),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                const Text(
+                  "Welcome Back ☕",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                const Text(
+                  "Login to continue",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black38,
+                        blurRadius: 12,
+                        offset: Offset(0, 6),
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+
+                      // EMAIL FIELD
+                      TextField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+
+                        style: const TextStyle(
+                          color: Colors.black, // ✅ FIXED TEXT COLOR
+                        ),
+                        cursorColor: const Color(0xFF3E2723),
+
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: const TextStyle(
+                            color: Color(0xFF5D4037),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.email,
+                            color: Color(0xFF5D4037),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // PASSWORD FIELD
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: true,
+
+                        style: const TextStyle(
+                          color: Colors.black, // ✅ FIXED TEXT COLOR
+                        ),
+                        cursorColor: const Color(0xFF3E2723),
+
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: const TextStyle(
+                            color: Color(0xFF5D4037),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.lock,
+                            color: Color(0xFF5D4037),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _handleLogin,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF5D4037),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text(
+                                  "LOGIN",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      TextButton(
+                        onPressed: () => context.push(Routes.signup),
+                        child: const Text(
+                          "Don't have an account? Sign up",
+                          style: TextStyle(
+                            color: Color(0xFF3E2723),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _handleLogin,
-              child: _isLoading
-                  ? const CircularProgressIndicator()
-                  : const Text('Login'),
-            ),
-            TextButton(
-              onPressed: () => context.push(Routes.signup),
-              child: const Text('Don\'t have an account? Sign up'),
-            ),
-          ],
+          ),
         ),
       ),
     );
